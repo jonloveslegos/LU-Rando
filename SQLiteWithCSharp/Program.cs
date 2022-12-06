@@ -243,7 +243,7 @@ namespace SQLiteWithCSharp
             for (int i = 0; i < listMissions.Count; i++)
             {
                 Console.WriteLine(String.Format("Writing {0}/{1}", i, listMissions.Count));
-                foundMission = world.locations.First(x => x.Value.id == listMissions[i].id).Value;
+                foundMission = world.locations.First(x => x.id == listMissions[i].id);
                 new MissionService().Update(foundMission);
             }
             Console.WriteLine(String.Format("Writing {0}/{1}", listMissions.Count, listMissions.Count));

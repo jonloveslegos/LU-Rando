@@ -39,10 +39,22 @@ public static class Rule
         switch (itemId.category)
         {
             case ItemCategory.items:
-                amount += world.placedLocations.Where(item => item.reward_item1.ToString() == itemId.name).Sum(item => item.reward_item1_count);
-                amount += world.placedLocations.Where(item => item.reward_item2.ToString() == itemId.name).Sum(item => item.reward_item2_count);
-                amount += world.placedLocations.Where(item => item.reward_item3.ToString() == itemId.name).Sum(item => item.reward_item3_count);
-                amount += world.placedLocations.Where(item => item.reward_item4.ToString() == itemId.name).Sum(item => item.reward_item4_count);
+                foreach (var item in world.placedLocations.Where(item => item.reward_item1.ToString() == itemId.name))
+                {
+                    amount += Math.Max(1, item.reward_item1_count);
+                }
+                foreach (var item in world.placedLocations.Where(item => item.reward_item2.ToString() == itemId.name))
+                {
+                    amount += Math.Max(1, item.reward_item2_count);
+                }
+                foreach (var item in world.placedLocations.Where(item => item.reward_item3.ToString() == itemId.name))
+                {
+                    amount += Math.Max(1, item.reward_item3_count);
+                }
+                foreach (var item in world.placedLocations.Where(item => item.reward_item4.ToString() == itemId.name))
+                {
+                    amount += Math.Max(1, item.reward_item4_count);
+                }
                 break;
             case ItemCategory.emotes:
                 amount += world.placedLocations.Where(item => item.reward_emote.ToString() == itemId.name).Count();
@@ -75,7 +87,7 @@ public static class Rule
 
 public class World
 {
-    public Dictionary<int, Missions> locations = new Dictionary<int, Missions>();
+    public List<Missions> locations = new List<Missions>();
     public List<Missions> placedLocations = new List<Missions>();
     public List<ItemType> items = new List<ItemType>();
     public List<ItemType> emotes = new List<ItemType>();
@@ -92,20 +104,23 @@ public class World
         {
             if (availableIds.Count(x => x.id == i) > 0)
             {
-                locations.Add(locations.Count, new Missions(availableIds.First(x => x.id == i)));
+                locations.Add(new Missions(availableIds.Find(x => x.id == i)));
                 locations[locations.Count - 1].reward_item1 = -999;
-                locations[locations.Count - 1].id = i;
             }
+        }
+        for (int i = 0; i < 99; i++)
+        {
+            SpecialLogic.savedAreas.Add(false);
         }
         for (var i = 0; i <= 2077; i++)
         {
-            rules.Add(i, (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0));
+            rules.Add(i, (world) => SpecialLogic.savedAreas[12]);
         }
-        availableIdsSaved = availableIds;
+        availableIdsSaved = new List<Missions>(locations);
     }
     public void PlaceItem(int locationLocId, int spot)
     {
-        int locationId = locations.First(x => x.Value.id == locationLocId).Key;
+        int locationId = locations.FindIndex(x => x.id == locationLocId);
         if (locations[locationId].reward_item1 == -999)
         {
             locations[locationId].reward_item1 = -1;
@@ -137,8 +152,7 @@ public class World
 
     public void Randomize()
     {
-        List<int> emptyLocs = locations.Where(x => x.Value.reward_item1 == -999).Select(x => x.Value.id).ToList();
-        emptyLocs = ShuffleList(emptyLocs, rng);
+        List<int> emptyLocs = locations.Where(x => x.reward_item1 == -999).Select(x => x.id).ToList();
         List<int> toChooseFrom = emptyLocs.Where(x => rules[x].Invoke(this)).ToList();
         currency = ShuffleList(currency, rng);
         imagine = ShuffleList(imagine, rng);
@@ -153,17 +167,24 @@ public class World
         var removedItems = new List<Missions>();
         while (emptyLocs.Count() > 0)
         {
-            chosen = toChooseFrom[0];
+            chosen = toChooseFrom[rng.Next(toChooseFrom.Count)];
             canPlace = false;
             placedIt = true;
             ind = 0;
             while (canPlace == false)
             {
                 PlaceItem(chosen, ind);
-                placedLocations.Add(new Missions(locations[locations.First(x => x.Value.id == chosen).Key]));
+                placedLocations.Add(new Missions(locations.Find(x => x.id == chosen)));
                 emptyLocs.Remove(chosen);
+                for (int i = 1; i < SpecialLogic.areaAccess.Count + 1; i++)
+                {
+                    if (SpecialLogic.savedAreas[i] == false)
+                    {
+                        SpecialLogic.savedAreas[i] = SpecialLogic.areaAccess[i].Invoke(this, 0, 0);
+                    }
+                }
                 toChooseFrom = emptyLocs.Where(x => rules[x].Invoke(this)).ToList();
-                if (toChooseFrom.Count > 0)
+                if (toChooseFrom.Count > 0 || emptyLocs.Count() <= 0)
                 {
                     canPlace = true;
                     currency.RemoveAt(ind);
@@ -183,7 +204,8 @@ public class World
                 {
                     ind++;
                     placedLocations.RemoveAt(placedLocations.Count - 1);
-                    locations[locations.First(x => x.Value.id == chosen).Key] = new Missions(availableIdsSaved.First(x => x.id == chosen));
+                    locations[locations.FindIndex(x => x.id == chosen)] = new Missions(availableIdsSaved.Find(x => x.id == chosen));
+                    locations[locations.FindIndex(x => x.id == chosen)].reward_item1 = -999;
                     if (ind >= currency.Count)
                     {
                         placedIt = false;
@@ -195,18 +217,22 @@ public class World
             }
             if (placedIt)
             {
-                Console.Write("\nPlaced item.\n" + (toChooseFrom.Count) + " locations accessible.\n" + (emptyLocs.Count) + " locations left.\n" + ((currency.Count + emotes.Count + imagine.Count + inv.Count + exp.Count + items.Count) / 12f).ToString() + " items left.");
+                Console.Write("Placed item.\n" + (toChooseFrom.Count) + " locations accessible.\n" + (emptyLocs.Count) + " locations left.\n" + ((currency.Count + emotes.Count + imagine.Count + inv.Count + exp.Count + items.Count) / 12f).ToString() + " items left.\n");
             }
             else
             {
                 removedItems.Clear();
                 removedItems.Add(placedLocations[placedLocations.Count - 1]);
                 emptyLocs.Add(placedLocations[placedLocations.Count - 1].id);
-                locations[locations.First(x => x.Value.id == placedLocations[placedLocations.Count - 1].id).Key] = new Missions(availableIdsSaved[locations.First(x => x.Value.id == placedLocations[placedLocations.Count - 1].id).Key]);
+                var tempind = locations.FindIndex(x => x.id == placedLocations[placedLocations.Count - 1].id);
+                locations[tempind] = new Missions(availableIdsSaved[tempind]);
+                locations[tempind].reward_item1 = -999;
                 placedLocations.RemoveAt(placedLocations.Count - 1);
                 removedItems.Add(placedLocations[placedLocations.Count - 1]);
                 emptyLocs.Add(placedLocations[placedLocations.Count - 1].id);
-                locations[locations.First(x => x.Value.id == placedLocations[placedLocations.Count - 1].id).Key] = new Missions(availableIdsSaved[locations.First(x => x.Value.id == placedLocations[placedLocations.Count - 1].id).Key]);
+                tempind = locations.FindIndex(x => x.id == placedLocations[placedLocations.Count - 1].id);
+                locations[tempind] = new Missions(availableIdsSaved[tempind]);
+                locations[tempind].reward_item1 = -999;
                 placedLocations.RemoveAt(placedLocations.Count - 1);
                 foreach (var item in removedItems)
                 {
@@ -225,8 +251,11 @@ public class World
                     imagine.Add(new ItemType(item.reward_maximagination.ToString(), ItemCategory.imagine));
                 }
                 removedItems.Clear();
+                for (int i = 1; i < SpecialLogic.areaAccess.Count + 1; i++)
+                {
+                    SpecialLogic.savedAreas[i] = SpecialLogic.areaAccess[i].Invoke(this, 0, 0);
+                }
                 toChooseFrom = emptyLocs.Where(x => rules[x].Invoke(this)).ToList();
-                Console.Write("\nUnplaced item.\n" + (toChooseFrom.Count) + " locations accessible.\n" + (emptyLocs.Count) + " locations left.\n" + ((currency.Count + emotes.Count + imagine.Count + inv.Count + exp.Count + items.Count) / 12f).ToString() + " items left.");
             }
         }
     }
@@ -291,59 +320,162 @@ public static class SpecialLogic
     public static bool TokenCount(World world, int requiredAmount)
     {
         int foundCount = 0;
-        int[] itemIds = new int[] { 10012, 10095, 10096, 14125, 14126, 12424, 12425, 14127 };
-        string[] itemCountFields = new string[] { "reward_item1", "reward_item2" };
-
-        foreach (int itemId in itemIds)
+        foreach (var item in world.placedLocations.Where(x => x.reward_item1 == int.Parse("10012")))
         {
-            foundCount += world.placedLocations
-                               .Where(x => (int)x.reward_item1 == itemId)
-                               .Sum(x => (int)x.reward_item1_count *
-                                         (itemId == 10012 ? 2 : (itemId == 10095 ? 5 : (itemId == 10096 ? 10 :
-                                         (itemId == 14125 ? 50 : (itemId == 14126 ? 100 : (itemId == 12424 ? 15 :
-                                         (itemId == 12425 ? 20 : 200))))))));
-            foundCount += world.placedLocations
-                               .Where(x => (int)x.reward_item2 == itemId)
-                               .Sum(x => (int)x.reward_item2_count *
-                                         (itemId == 10012 ? 2 : (itemId == 10095 ? 5 : (itemId == 10096 ? 10 :
-                                         (itemId == 14125 ? 50 : (itemId == 14126 ? 100 : (itemId == 12424 ? 15 :
-                                         (itemId == 12425 ? 20 : 200))))))));
-            foundCount += world.placedLocations
-                               .Where(x => (int)x.reward_item3 == itemId)
-                               .Sum(x => (int)x.reward_item3_count *
-                                         (itemId == 10012 ? 2 : (itemId == 10095 ? 5 : (itemId == 10096 ? 10 :
-                                         (itemId == 14125 ? 50 : (itemId == 14126 ? 100 : (itemId == 12424 ? 15 :
-                                         (itemId == 12425 ? 20 : 200))))))));
-            foundCount += world.placedLocations
-                               .Where(x => (int)x.reward_item4 == itemId)
-                               .Sum(x => (int)x.reward_item4_count *
-                                         (itemId == 10012 ? 2 : (itemId == 10095 ? 5 : (itemId == 10096 ? 10 :
-                                         (itemId == 14125 ? 50 : (itemId == 14126 ? 100 : (itemId == 12424 ? 15 :
-                                         (itemId == 12425 ? 20 : 200))))))));
+            foundCount += item.reward_item1_count * 2;
         }
-        
+        foreach (var item in world.placedLocations.Where(x => x.reward_item1 == int.Parse("10095")))
+        {
+            foundCount += item.reward_item1_count * 5;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item1 == int.Parse("10096")))
+        {
+            foundCount += item.reward_item1_count * 10;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item1 == int.Parse("14125")))
+        {
+            foundCount += item.reward_item1_count * 50;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item1 == int.Parse("14126")))
+        {
+            foundCount += item.reward_item1_count * 100;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item1 == int.Parse("12424")))
+        {
+            foundCount += item.reward_item1_count * 15;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item1 == int.Parse("12425")))
+        {
+            foundCount += item.reward_item1_count * 20;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item1 == int.Parse("14127")))
+        {
+            foundCount += item.reward_item1_count * 200;
+        }
 
+
+        foreach (var item in world.placedLocations.Where(x => x.reward_item2 == int.Parse("10012")))
+        {
+            foundCount += item.reward_item2_count * 2;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item2 == int.Parse("10095")))
+        {
+            foundCount += item.reward_item2_count * 5;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item2 == int.Parse("10096")))
+        {
+            foundCount += item.reward_item2_count * 10;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item2 == int.Parse("14125")))
+        {
+            foundCount += item.reward_item2_count * 50;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item2 == int.Parse("14126")))
+        {
+            foundCount += item.reward_item2_count * 100;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item2 == int.Parse("12424")))
+        {
+            foundCount += item.reward_item2_count * 15;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item2 == int.Parse("12425")))
+        {
+            foundCount += item.reward_item2_count * 20;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item2 == int.Parse("14127")))
+        {
+            foundCount += item.reward_item2_count * 200;
+        }
+
+
+        foreach (var item in world.placedLocations.Where(x => x.reward_item3 == int.Parse("10012")))
+        {
+            foundCount += item.reward_item3_count * 2;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item3 == int.Parse("10095")))
+        {
+            foundCount += item.reward_item3_count * 5;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item3 == int.Parse("10096")))
+        {
+            foundCount += item.reward_item3_count * 10;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item3 == int.Parse("14125")))
+        {
+            foundCount += item.reward_item3_count * 50;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item3 == int.Parse("14126")))
+        {
+            foundCount += item.reward_item3_count * 100;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item3 == int.Parse("12424")))
+        {
+            foundCount += item.reward_item3_count * 15;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item3 == int.Parse("12425")))
+        {
+            foundCount += item.reward_item3_count * 20;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item3 == int.Parse("14127")))
+        {
+            foundCount += item.reward_item3_count * 200;
+        }
+
+
+        foreach (var item in world.placedLocations.Where(x => x.reward_item4 == int.Parse("10012")))
+        {
+            foundCount += item.reward_item4_count * 2;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item4 == int.Parse("10095")))
+        {
+            foundCount += item.reward_item4_count * 5;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item4 == int.Parse("10096")))
+        {
+            foundCount += item.reward_item4_count * 10;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item4 == int.Parse("14125")))
+        {
+            foundCount += item.reward_item4_count * 50;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item4 == int.Parse("14126")))
+        {
+            foundCount += item.reward_item4_count * 100;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item4 == int.Parse("12424")))
+        {
+            foundCount += item.reward_item4_count * 15;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item4 == int.Parse("12425")))
+        {
+            foundCount += item.reward_item4_count * 20;
+        }
+        foreach (var item in world.placedLocations.Where(x => x.reward_item4 == int.Parse("14127")))
+        {
+            foundCount += item.reward_item4_count * 200;
+        }
         return foundCount >= requiredAmount;
     }
+    public static List<bool> savedAreas = new List<bool>();
     public static Dictionary<int, Func<World, int, int, bool>> areaAccess = new Dictionary<int, Func<World, int, int, bool>>
     {
         {1, (w, s, g) => SpecialLogic.CanCompleteTutorial(w) && Rule.PlacedItem(w, new ItemType("6086", ItemCategory.items), 1)},
-        {2, (w, s, g) => (Rule.PlacedItem(w, new ItemType("4880", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("4881", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("4883", ItemCategory.items), 1)) && SpecialLogic.areaAccess[1].Invoke(w, s, g)},
-        {3, (w, s, g) => Rule.PlacedItem(w, new ItemType("356", ItemCategory.emotes), 1) && SpecialLogic.areaAccess[2].Invoke(w, s, g)},
-        {4, (w, s, g) => Rule.PlacedItem(w, new ItemType("-1", ItemCategory.currency), s + 100) && SpecialLogic.areaAccess[3].Invoke(w, s, g)},
-        {5, (w, s, g) =>  Rule.PlacedItem(w, new ItemType("-1", ItemCategory.currency), s + 100) && SpecialLogic.areaAccess[4].Invoke(w, s, g)},
-        {6, (w, s, g) => Rule.PlacedItem(w, new ItemType("3039", ItemCategory.items), g + 1) && SpecialLogic.areaAccess[5].Invoke(w, s, g)},
-        {7, (w, s, g) =>  Rule.PlacedItem(w, new ItemType("14592", ItemCategory.items), 1) && SpecialLogic.areaAccess[6].Invoke(w, s, g)},
-        {8, (w, s, g) =>  Rule.PlacedItem(w, new ItemType("14553", ItemCategory.items), 1) && SpecialLogic.areaAccess[7].Invoke(w, s, g)},
-        {9, (w, s, g) =>  (Rule.PlacedItem(w, new ItemType("14359", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("14321", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("14353", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("14315", ItemCategory.items), 1)) && SpecialLogic.areaAccess[8].Invoke(w, s, g)},
-        {10, (w, s, g) =>  (Rule.PlacedItem(w, new ItemType("14359", ItemCategory.items), 2) || Rule.PlacedItem(w, new ItemType("14321", ItemCategory.items), 2) || Rule.PlacedItem(w, new ItemType("14353", ItemCategory.items), 2) || Rule.PlacedItem(w, new ItemType("14315", ItemCategory.items), 2)) && SpecialLogic.areaAccess[9].Invoke(w, s, g)},
-        {11, (w, s, g) => (Rule.PlacedItem(w, new ItemType("9516", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("9517", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("9518", ItemCategory.items), 1)) && SpecialLogic.areaAccess[10].Invoke(w, s, g)},
+        {2, (w, s, g) => (Rule.PlacedItem(w, new ItemType("4880", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("4881", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("4883", ItemCategory.items), 1)) && SpecialLogic.savedAreas[1]},
+        {3, (w, s, g) => Rule.PlacedItem(w, new ItemType("356", ItemCategory.emotes), 1) && SpecialLogic.savedAreas[2]},
+        {4, (w, s, g) => Rule.PlacedItem(w, new ItemType("-1", ItemCategory.currency), s + 100) && SpecialLogic.savedAreas[3]},
+        {5, (w, s, g) =>  Rule.PlacedItem(w, new ItemType("-1", ItemCategory.currency), s + 100) && SpecialLogic.savedAreas[4]},
+        {6, (w, s, g) => Rule.PlacedItem(w, new ItemType("3039", ItemCategory.items), g + 1) && SpecialLogic.savedAreas[5]},
+        {7, (w, s, g) =>  Rule.PlacedItem(w, new ItemType("14592", ItemCategory.items), 1) && SpecialLogic.savedAreas[6]},
+        {8, (w, s, g) =>  Rule.PlacedItem(w, new ItemType("14553", ItemCategory.items), 1) && SpecialLogic.savedAreas[7]},
+        {9, (w, s, g) =>  (Rule.PlacedItem(w, new ItemType("14359", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("14321", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("14353", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("14315", ItemCategory.items), 1)) && SpecialLogic.savedAreas[8]},
+        {10, (w, s, g) =>  (Rule.PlacedItem(w, new ItemType("14359", ItemCategory.items), 2) || Rule.PlacedItem(w, new ItemType("14321", ItemCategory.items), 2) || Rule.PlacedItem(w, new ItemType("14353", ItemCategory.items), 2) || Rule.PlacedItem(w, new ItemType("14315", ItemCategory.items), 2)) && SpecialLogic.savedAreas[9]},
+        {11, (w, s, g) => (Rule.PlacedItem(w, new ItemType("9516", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("9517", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("9518", ItemCategory.items), 1)) && SpecialLogic.savedAreas[10]},
         {12, (w, s, g) =>
         ((SQLiteWithCSharp.Program.chosenFaction == 0 && (Rule.PlacedItem(w, new ItemType("8033", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8031", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("7591", ItemCategory.items), 1))) ||
         (SQLiteWithCSharp.Program.chosenFaction == 1 && (Rule.PlacedItem(w, new ItemType("7586", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8032", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8034", ItemCategory.items), 1))) ||
         (SQLiteWithCSharp.Program.chosenFaction == 2 && (Rule.PlacedItem(w, new ItemType("7589", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8029", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8030", ItemCategory.items), 1))) ||
         (SQLiteWithCSharp.Program.chosenFaction == 3 && (Rule.PlacedItem(w, new ItemType("7590", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8028", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8027", ItemCategory.items), 1)))
-        ) && SpecialLogic.areaAccess[11].Invoke(w, s, g)},
+        ) && SpecialLogic.savedAreas[11]},
     };
 }
 
@@ -365,121 +497,121 @@ public class Logic
         inWorld.rules[660] = (world) => SpecialLogic.CanCompleteTutorial(world);
         inWorld.rules[757] = (world) => SpecialLogic.CanCompleteTutorial(world);
         inWorld.rules[1896] = (world) => SpecialLogic.CanCompleteTutorial(world);
-        inWorld.rules[311] = (world) => SpecialLogic.areaAccess[1].Invoke(world,0,0);
-        inWorld.rules[1728] = (world) => SpecialLogic.areaAccess[1].Invoke(world,0,0);
-        inWorld.rules[353] = (world) => SpecialLogic.areaAccess[1].Invoke(world,0,0);
-        inWorld.rules[355] = (world) => SpecialLogic.areaAccess[1].Invoke(world,0,0);
-        inWorld.rules[356] = (world) => SpecialLogic.areaAccess[1].Invoke(world,0,0);
-        inWorld.rules[251] = (world) => SpecialLogic.areaAccess[1].Invoke(world,0,0);
-        inWorld.rules[252] = (world) => SpecialLogic.areaAccess[1].Invoke(world,0,0);
-        inWorld.rules[706] = (world) => SpecialLogic.areaAccess[1].Invoke(world,0,0);
-        inWorld.rules[707] = (world) => SpecialLogic.areaAccess[1].Invoke(world,0,0);
-        inWorld.rules[287] = (world) => SpecialLogic.areaAccess[1].Invoke(world,0,0);
-        inWorld.rules[755] = (world) => SpecialLogic.areaAccess[2].Invoke(world,0,0);
-        inWorld.rules[312] = (world) => SpecialLogic.areaAccess[2].Invoke(world,0,0);
-        inWorld.rules[314] = (world) => SpecialLogic.areaAccess[2].Invoke(world,0,0);
-        inWorld.rules[259] = (world) => SpecialLogic.areaAccess[3].Invoke(world,0,0);
-        inWorld.rules[315] = (world) => SpecialLogic.areaAccess[3].Invoke(world,0,0);
-        inWorld.rules[733] = (world) => SpecialLogic.areaAccess[4].Invoke(world,0,0);
-        inWorld.rules[316] = (world) => SpecialLogic.areaAccess[4].Invoke(world,0,0);
-        inWorld.rules[939] = (world) => SpecialLogic.areaAccess[5].Invoke(world,0,0);
-        inWorld.rules[940] = (world) => SpecialLogic.areaAccess[5].Invoke(world,0,0);
-        inWorld.rules[479] = (world) => SpecialLogic.areaAccess[6].Invoke(world,0,0);
-        inWorld.rules[1847] = (world) => SpecialLogic.areaAccess[6].Invoke(world,0,0);
-        inWorld.rules[1848] = (world) => SpecialLogic.areaAccess[6].Invoke(world,0,0);
-        inWorld.rules[477] = (world) => SpecialLogic.areaAccess[6].Invoke(world,0,0);
-        inWorld.rules[260] = (world) => SpecialLogic.areaAccess[7].Invoke(world,0,0);
-        inWorld.rules[1151] = (world) => SpecialLogic.areaAccess[7].Invoke(world,0,0);
-        inWorld.rules[1849] = (world) => SpecialLogic.areaAccess[7].Invoke(world,0,0);
-        inWorld.rules[1850] = (world) => SpecialLogic.areaAccess[8].Invoke(world,0,0);
-        inWorld.rules[1851] = (world) => SpecialLogic.areaAccess[8].Invoke(world,0,0);
-        inWorld.rules[1852] = (world) => SpecialLogic.areaAccess[8].Invoke(world,0,0);
-        inWorld.rules[1935] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[313] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[1853] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[1936] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[317] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[1854] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[1855] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[1856] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[318] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[633] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[244] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[377] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[1894] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[208] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[261] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[708] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[783] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[346] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[347] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[348] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[349] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[709] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[250] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[282] = (world) => SpecialLogic.areaAccess[9].Invoke(world,0,0);
-        inWorld.rules[1950] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[768] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[871] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[891] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[320] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[1877] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[319] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[470] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[325] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[286] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[1293] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[957] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[1153] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[322] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[1152] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[324] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[680] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[938] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[483] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[476] = (world) => SpecialLogic.areaAccess[10].Invoke(world,0,0);
-        inWorld.rules[809] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[475] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[478] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[482] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[588] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[589] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[590] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[591] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[684] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[685] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[686] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[687] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[593] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[256] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[283] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[537] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[302] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[595] = (world) => SpecialLogic.areaAccess[11].Invoke(world,0,0);
-        inWorld.rules[812] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[813] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[814] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[815] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[1889] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[1890] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[1891] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[1892] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[867] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0) && SpecialLogic.TokenCount(world, 25);
-        inWorld.rules[866] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0) && SpecialLogic.TokenCount(world, 25);
-        inWorld.rules[865] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0) && SpecialLogic.TokenCount(world, 25);
-        inWorld.rules[767] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0) && SpecialLogic.TokenCount(world, 25);
-        inWorld.rules[779] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[833] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[1381] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[876] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[175] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[236] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[176] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[943] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[944] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[942] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[857] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0);
-        inWorld.rules[379] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0) && Rule.PlacedItem(world, new ItemType("3206", ItemCategory.items), 1);
-        inWorld.rules[500] = (world) => SpecialLogic.areaAccess[12].Invoke(world,0,0) && Rule.PlacedItem(world, new ItemType("3206", ItemCategory.items), 1);
+        inWorld.rules[311] = (world) => SpecialLogic.savedAreas[1];
+        inWorld.rules[1728] = (world) => SpecialLogic.savedAreas[1];
+        inWorld.rules[353] = (world) => SpecialLogic.savedAreas[1];
+        inWorld.rules[355] = (world) => SpecialLogic.savedAreas[1];
+        inWorld.rules[356] = (world) => SpecialLogic.savedAreas[1];
+        inWorld.rules[251] = (world) => SpecialLogic.savedAreas[1];
+        inWorld.rules[252] = (world) => SpecialLogic.savedAreas[1];
+        inWorld.rules[706] = (world) => SpecialLogic.savedAreas[1];
+        inWorld.rules[707] = (world) => SpecialLogic.savedAreas[1];
+        inWorld.rules[287] = (world) => SpecialLogic.savedAreas[1];
+        inWorld.rules[755] = (world) => SpecialLogic.savedAreas[2];
+        inWorld.rules[312] = (world) => SpecialLogic.savedAreas[2];
+        inWorld.rules[314] = (world) => SpecialLogic.savedAreas[2];
+        inWorld.rules[259] = (world) => SpecialLogic.savedAreas[3];
+        inWorld.rules[315] = (world) => SpecialLogic.savedAreas[3];
+        inWorld.rules[733] = (world) => SpecialLogic.savedAreas[4];
+        inWorld.rules[316] = (world) => SpecialLogic.savedAreas[4];
+        inWorld.rules[939] = (world) => SpecialLogic.savedAreas[5];
+        inWorld.rules[940] = (world) => SpecialLogic.savedAreas[5];
+        inWorld.rules[479] = (world) => SpecialLogic.savedAreas[6];
+        inWorld.rules[1847] = (world) => SpecialLogic.savedAreas[6];
+        inWorld.rules[1848] = (world) => SpecialLogic.savedAreas[6];
+        inWorld.rules[477] = (world) => SpecialLogic.savedAreas[6];
+        inWorld.rules[260] = (world) => SpecialLogic.savedAreas[7];
+        inWorld.rules[1151] = (world) => SpecialLogic.savedAreas[7];
+        inWorld.rules[1849] = (world) => SpecialLogic.savedAreas[7];
+        inWorld.rules[1850] = (world) => SpecialLogic.savedAreas[8];
+        inWorld.rules[1851] = (world) => SpecialLogic.savedAreas[8];
+        inWorld.rules[1852] = (world) => SpecialLogic.savedAreas[8];
+        inWorld.rules[1935] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[313] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[1853] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[1936] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[317] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[1854] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[1855] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[1856] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[318] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[633] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[244] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[377] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[1894] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[208] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[261] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[708] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[783] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[346] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[347] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[348] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[349] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[709] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[250] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[282] = (world) => SpecialLogic.savedAreas[9];
+        inWorld.rules[1950] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[768] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[871] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[891] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[320] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[1877] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[319] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[470] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[325] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[286] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[1293] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[957] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[1153] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[322] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[1152] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[324] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[680] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[938] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[483] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[476] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[809] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[475] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[478] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[482] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[588] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[589] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[590] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[591] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[684] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[685] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[686] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[687] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[593] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[256] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[283] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[537] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[302] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[595] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[812] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[813] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[814] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[815] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[1889] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[1890] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[1891] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[1892] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[867] = (world) => SpecialLogic.savedAreas[12] && SpecialLogic.TokenCount(world, 25);
+        inWorld.rules[866] = (world) => SpecialLogic.savedAreas[12] && SpecialLogic.TokenCount(world, 25);
+        inWorld.rules[865] = (world) => SpecialLogic.savedAreas[12] && SpecialLogic.TokenCount(world, 25);
+        inWorld.rules[767] = (world) => SpecialLogic.savedAreas[12] && SpecialLogic.TokenCount(world, 25);
+        inWorld.rules[779] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[833] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[1381] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[876] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[175] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[236] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[176] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[943] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[944] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[942] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[857] = (world) => SpecialLogic.savedAreas[12];
+        inWorld.rules[379] = (world) => SpecialLogic.savedAreas[12] && Rule.PlacedItem(world, new ItemType("3206", ItemCategory.items), 1);
+        inWorld.rules[500] = (world) => SpecialLogic.savedAreas[12] && Rule.PlacedItem(world, new ItemType("3206", ItemCategory.items), 1);
     }
 }
