@@ -1,0 +1,1 @@
+﻿(0) Choose forced faction (0: Assembly, 1: Venture, 2: Paradox, 3: Sentinel)=2

@@ -1,0 +1,10 @@
+.vs/*
+LU Randomizer/.vs/*
+packages/*
+LU Randomizer/packages/*
+*.dll
+*/bin/*
+*/obj/*
+*/Properties/*
+*sqlite
+SQLiteWithCSharp/World - Copy.cs
