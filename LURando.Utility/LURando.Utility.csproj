@@ -7,8 +7,8 @@
     <ProjectGuid>{9AD0BCA7-7DFD-41F8-A906-753DBDF0E3E8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SQLiteWithCSharp.Utility</RootNamespace>
-    <AssemblyName>SQLiteWithCSharp.Utility</AssemblyName>
+    <RootNamespace>LURando.Utility</RootNamespace>
+    <AssemblyName>LURando.Utility</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>

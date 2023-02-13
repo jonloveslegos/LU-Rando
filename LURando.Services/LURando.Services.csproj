@@ -7,8 +7,8 @@
     <ProjectGuid>{D096D077-EA50-4238-A425-CC2C2F15EFE5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SQLiteWithCSharp.Services</RootNamespace>
-    <AssemblyName>SQLiteWithCSharp.Services</AssemblyName>
+    <RootNamespace>LURando.Services</RootNamespace>
+    <AssemblyName>LURando.Services</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,15 +44,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SQLiteWithCSharp.Common\LURando.Common.csproj">
+    <ProjectReference Include="..\LuRando.Common\LURando.Common.csproj">
       <Project>{6795ef03-0d21-4e24-918d-d9be66a961b3}</Project>
       <Name>LURando.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SQLiteWithCSharp.Models\LURando.Models.csproj">
+    <ProjectReference Include="..\LuRando.Models\LURando.Models.csproj">
       <Project>{73605cdd-92d7-455f-9a28-fbc7ff2de21f}</Project>
       <Name>LURando.Models</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SQLiteWithCSharp.Utility\LURando.Utility.csproj">
+    <ProjectReference Include="..\LuRando.Utility\LURando.Utility.csproj">
       <Project>{9ad0bca7-7dfd-41f8-a906-753dbdf0e3e8}</Project>
       <Name>LURando.Utility</Name>
     </ProjectReference>

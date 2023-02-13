@@ -7,8 +7,8 @@
     <ProjectGuid>{73605CDD-92D7-455F-9A28-FBC7FF2DE21F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SQLiteWithCSharp.Models</RootNamespace>
-    <AssemblyName>SQLiteWithCSharp.Models</AssemblyName>
+    <RootNamespace>LURando.Models</RootNamespace>
+    <AssemblyName>LURando.Models</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,7 +44,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SQLiteWithCSharp.Utility\LURando.Utility.csproj">
+    <ProjectReference Include="..\LuRando.Utility\LURando.Utility.csproj">
       <Project>{9ad0bca7-7dfd-41f8-a906-753dbdf0e3e8}</Project>
       <Name>LURando.Utility</Name>
     </ProjectReference>

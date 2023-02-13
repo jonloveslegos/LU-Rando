@@ -150,7 +150,7 @@ public class World
                    .ToList();
     }
 
-    public void Randomize()
+    public bool Randomize()
     {
         List<int> emptyLocs = locations.Where(x => x.reward_item1 == -999).Select(x => x.id).ToList();
         List<int> toChooseFrom = emptyLocs.Where(x => rules[x].Invoke(this)).ToList();
@@ -164,6 +164,7 @@ public class World
         var canPlace = false;
         var placedIt = true;
         var ind = 0;
+        int backs = 0;
         var removedItems = new List<Missions>();
         while (emptyLocs.Count() > 0)
         {
@@ -221,6 +222,11 @@ public class World
             }
             else
             {
+                backs++;
+                if (backs >= 50)
+                {
+                    return false;
+                }
                 removedItems.Clear();
                 removedItems.Add(placedLocations[placedLocations.Count - 1]);
                 emptyLocs.Add(placedLocations[placedLocations.Count - 1].id);
@@ -258,6 +264,7 @@ public class World
                 toChooseFrom = emptyLocs.Where(x => rules[x].Invoke(this)).ToList();
             }
         }
+        return true;
     }
 
     public void AddItems()

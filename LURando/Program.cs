@@ -191,135 +191,141 @@ namespace LURando
                 new MissionService().Update(tempMission);
             }
             Missions foundMission = new Missions();
-                var editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/emotes.txt");
-                for (int i = 0; i < listMissions.Count; i++)
+            var editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/emotes.txt");
+            for (int i = 0; i < listMissions.Count; i++)
+            {
+                foundMission = listMissions[i];
+                if (foundMission.id > 0)
                 {
-                    foundMission = listMissions[i];
-                    if (foundMission.id > 0)
-                    {
-                        editingFile.Write(foundMission.reward_emote + "\n");
-                        editingFile.Write(foundMission.reward_emote2 + "\n");
-                        editingFile.Write(foundMission.reward_emote3 + "\n");
-                        editingFile.Write(foundMission.reward_emote4);
-                    }
-                    if (i != listMissions.Count - 1)
-                    {
-                        editingFile.Write("\n");
-                    }
+                    editingFile.Write(foundMission.reward_emote + "\n");
+                    editingFile.Write(foundMission.reward_emote2 + "\n");
+                    editingFile.Write(foundMission.reward_emote3 + "\n");
+                    editingFile.Write(foundMission.reward_emote4);
                 }
-                editingFile.Close();
-                editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/items.txt");
-                for (int i = 0; i < listMissions.Count; i++)
+                if (i != listMissions.Count - 1)
                 {
-                    foundMission = listMissions[i];
-                    if (foundMission.id > 0)
-                    {
-                        editingFile.Write(foundMission.reward_item1 + "\n");
-                        editingFile.Write(foundMission.reward_item1_count + "\n");
-                        editingFile.Write(foundMission.reward_item2 + "\n");
-                        editingFile.Write(foundMission.reward_item2_count + "\n");
-                        editingFile.Write(foundMission.reward_item3 + "\n");
-                        editingFile.Write(foundMission.reward_item3_count + "\n");
-                        editingFile.Write(foundMission.reward_item4 + "\n");
-                        editingFile.Write(foundMission.reward_item4_count);
-                    }
-                    if (i != listMissions.Count - 1)
-                    {
-                        editingFile.Write("\n");
-                    }
+                    editingFile.Write("\n");
                 }
-                editingFile.Close();
-                editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/currency.txt");
-                for (int i = 0; i < listMissions.Count; i++)
+            }
+            editingFile.Close();
+            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/items.txt");
+            for (int i = 0; i < listMissions.Count; i++)
+            {
+                foundMission = listMissions[i];
+                if (foundMission.id > 0)
                 {
-                    foundMission = listMissions[i];
-                    if (foundMission.id > 0)
-                    {
-                        editingFile.Write(foundMission.reward_currency);
-                    }
-                    if (i != listMissions.Count - 1)
-                    {
-                        editingFile.Write("\n");
-                    }
+                    editingFile.Write(foundMission.reward_item1 + "\n");
+                    editingFile.Write(foundMission.reward_item1_count + "\n");
+                    editingFile.Write(foundMission.reward_item2 + "\n");
+                    editingFile.Write(foundMission.reward_item2_count + "\n");
+                    editingFile.Write(foundMission.reward_item3 + "\n");
+                    editingFile.Write(foundMission.reward_item3_count + "\n");
+                    editingFile.Write(foundMission.reward_item4 + "\n");
+                    editingFile.Write(foundMission.reward_item4_count);
                 }
-                editingFile.Close();
-                editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/exp.txt");
-                for (int i = 0; i < listMissions.Count; i++)
+                if (i != listMissions.Count - 1)
                 {
-                    foundMission = listMissions[i];
-                    if (foundMission.id > 0)
-                    {
-                        editingFile.Write(foundMission.LegoScore);
-                    }
-                    if (i != listMissions.Count - 1)
-                    {
-                        editingFile.Write("\n");
-                    }
+                    editingFile.Write("\n");
                 }
-                editingFile.Close();
-                editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/imagination.txt");
-                for (int i = 0; i < listMissions.Count; i++)
+            }
+            editingFile.Close();
+            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/currency.txt");
+            for (int i = 0; i < listMissions.Count; i++)
+            {
+                foundMission = listMissions[i];
+                if (foundMission.id > 0)
                 {
-                    foundMission = listMissions[i];
-                    if (foundMission.id > 0)
-                    {
-                        editingFile.Write(foundMission.reward_maximagination);
-                    }
-                    if (i != listMissions.Count - 1)
-                    {
-                        editingFile.Write("\n");
-                    }
+                    editingFile.Write(foundMission.reward_currency);
                 }
-                editingFile.Close();
-                editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/inventory.txt");
-                for (int i = 0; i < listMissions.Count; i++)
+                if (i != listMissions.Count - 1)
                 {
-                    foundMission = listMissions[i];
-                    if (foundMission.id > 0)
-                    {
-                        editingFile.Write(foundMission.reward_maxinventory);
-                    }
-                    if (i != listMissions.Count - 1)
-                    {
-                        editingFile.Write("\n");
-                    }
+                    editingFile.Write("\n");
                 }
-                editingFile.Close();
+            }
+            editingFile.Close();
+            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/exp.txt");
+            for (int i = 0; i < listMissions.Count; i++)
+            {
+                foundMission = listMissions[i];
+                if (foundMission.id > 0)
+                {
+                    editingFile.Write(foundMission.LegoScore);
+                }
+                if (i != listMissions.Count - 1)
+                {
+                    editingFile.Write("\n");
+                }
+            }
+            editingFile.Close();
+            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/imagination.txt");
+            for (int i = 0; i < listMissions.Count; i++)
+            {
+                foundMission = listMissions[i];
+                if (foundMission.id > 0)
+                {
+                    editingFile.Write(foundMission.reward_maximagination);
+                }
+                if (i != listMissions.Count - 1)
+                {
+                    editingFile.Write("\n");
+                }
+            }
+            editingFile.Close();
+            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/inventory.txt");
+            for (int i = 0; i < listMissions.Count; i++)
+            {
+                foundMission = listMissions[i];
+                if (foundMission.id > 0)
+                {
+                    editingFile.Write(foundMission.reward_maxinventory);
+                }
+                if (i != listMissions.Count - 1)
+                {
+                    editingFile.Write("\n");
+                }
+            }
+            editingFile.Close();
             for (int i = 0; i < listMissions.Count; i++)
             {
                 foundMission = listMissions[i];
                 foundMission.isChoiceReward = 0;
-                    foundMission.reward_item1 = -1;
-                    foundMission.reward_item2 = -1;
-                    foundMission.reward_item3 = -1;
-                    foundMission.reward_item4 = -1;
-                    foundMission.reward_emote = -1;
-                    foundMission.reward_emote2 = -1;
-                    foundMission.reward_emote3 = -1;
-                    foundMission.reward_emote4 = -1;
-                    foundMission.reward_item1_count = 0;
-                    foundMission.reward_item2_count = 0;
-                    foundMission.reward_item3_count = 0;
-                    foundMission.reward_item4_count = 0;
-                    foundMission.reward_item1_repeatable = -1;
-                    foundMission.reward_item2_repeatable = -1;
-                    foundMission.reward_item3_repeatable = -1;
-                    foundMission.reward_item4_repeatable = -1;
-                    foundMission.reward_item1_repeat_count = 0;
-                    foundMission.reward_item2_repeat_count = 0;
-                    foundMission.reward_item3_repeat_count = 0;
-                    foundMission.reward_item4_repeat_count = 0;
-                    foundMission.reward_currency = 0;
-                    foundMission.reward_currency_repeatable = 0;
-                    foundMission.reward_maximagination = 0;
-                    foundMission.reward_maxinventory = 0;
-                    foundMission.LegoScore = 0;
+                foundMission.reward_item1 = -1;
+                foundMission.reward_item2 = -1;
+                foundMission.reward_item3 = -1;
+                foundMission.reward_item4 = -1;
+                foundMission.reward_emote = -1;
+                foundMission.reward_emote2 = -1;
+                foundMission.reward_emote3 = -1;
+                foundMission.reward_emote4 = -1;
+                foundMission.reward_item1_count = 0;
+                foundMission.reward_item2_count = 0;
+                foundMission.reward_item3_count = 0;
+                foundMission.reward_item4_count = 0;
+                foundMission.reward_item1_repeatable = -1;
+                foundMission.reward_item2_repeatable = -1;
+                foundMission.reward_item3_repeatable = -1;
+                foundMission.reward_item4_repeatable = -1;
+                foundMission.reward_item1_repeat_count = 0;
+                foundMission.reward_item2_repeat_count = 0;
+                foundMission.reward_item3_repeat_count = 0;
+                foundMission.reward_item4_repeat_count = 0;
+                foundMission.reward_currency = 0;
+                foundMission.reward_currency_repeatable = 0;
+                foundMission.reward_maximagination = 0;
+                foundMission.reward_maxinventory = 0;
+                foundMission.LegoScore = 0;
             }
             World world = new World(listMissions);
             Logic logic = new Logic();
             logic.SetLogic(world);
             world.AddItems();
-            world.Randomize();
+            while (!world.Randomize())
+            {
+                world = new World(listMissions);
+                logic = new Logic();
+                logic.SetLogic(world);
+                world.AddItems();
+            }
             for (int i = 0; i < listMissions.Count; i++)
             {
                 Console.WriteLine(String.Format("Writing {0}/{1}", i, listMissions.Count));
@@ -350,7 +356,7 @@ namespace LURando
         {
             if (String.IsNullOrEmpty(Storage.ConnectionString))
             {
-                Storage.ConnectionString = string.Format("Data Source={0};Version=3;", System.IO.Directory.GetCurrentDirectory()+System.Configuration.ConfigurationManager.AppSettings["DatabaseFile"]+ "\\DataBase\\CDServer.sqlite");
+                Storage.ConnectionString = string.Format("Data Source={0};Version=3;", System.IO.Directory.GetCurrentDirectory() + System.Configuration.ConfigurationManager.AppSettings["DatabaseFile"] + "\\DataBase\\CDServer.sqlite");
             }
         }
 
