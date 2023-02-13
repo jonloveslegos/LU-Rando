@@ -1,11 +1,11 @@
-﻿using SQLiteWithCSharp.Utility;
+﻿using LURando.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLiteWithCSharp.Models
+namespace LURando.Models
 {
     public class Missions
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SQLiteWithCSharp.Common;
-using SQLiteWithCSharp.Models;
-using SQLiteWithCSharp.Services;
-using SQLiteWithCSharp.Utility;
+using LURando.Common;
+using LURando.Models;
+using LURando.Services;
+using LURando.Utility;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
-namespace SQLiteWithCSharp
+namespace LURando
 {
     static class Program
     {
@@ -32,16 +32,114 @@ namespace SQLiteWithCSharp
             listMissions.Remove(listMissions.First(x => x.id == 870));
             var tempMission = new Missions(listMissions.First(x => x.id == 474));
             listMissions.Remove(listMissions.First(x => x.id == 474));
+            listMissions.RemoveAll(x => x.defined_type == "Events" || x.defined_type == "Test" || x.defined_type == "Hidden" || x.defined_type == "LUPs" || x.defined_type == "Build");
             var tempFile = File.OpenText("Options.txt");
+            listMissions.Remove(listMissions.First(x => x.id == 392));
+            listMissions.Remove(listMissions.First(x => x.id == 393));
+            listMissions.Remove(listMissions.First(x => x.id == 394));
+            listMissions.Remove(listMissions.First(x => x.id == 395));
+            listMissions.Remove(listMissions.First(x => x.id == 396));
+            listMissions.Remove(listMissions.First(x => x.id == 397));
+            listMissions.Remove(listMissions.First(x => x.id == 398));
             chosenFaction = int.Parse(tempFile.ReadLine().Split('=')[1]);
-            if (chosenFaction == 0)
+            if (chosenFaction != 0) // assembly
+            {
+                listMissions.Remove(listMissions.First(x => x.id == 588));
+                listMissions.Remove(listMissions.First(x => x.id == 815));
+                listMissions.Remove(listMissions.First(x => x.id == 545));
+                listMissions.Remove(listMissions.First(x => x.id == 546));
+                listMissions.Remove(listMissions.First(x => x.id == 547));
+                listMissions.Remove(listMissions.First(x => x.id == 548));
+                listMissions.Remove(listMissions.First(x => x.id == 552));
+                listMissions.Remove(listMissions.First(x => x.id == 553));
+                listMissions.Remove(listMissions.First(x => x.id == 554));
+                listMissions.Remove(listMissions.First(x => x.id == 955));
+                listMissions.Remove(listMissions.First(x => x.id == 550));
+                listMissions.Remove(listMissions.First(x => x.id == 551));
+                listMissions.Remove(listMissions.First(x => x.id == 1472));
+                listMissions.Remove(listMissions.First(x => x.id == 1473));
+                listMissions.Remove(listMissions.First(x => x.id == 1474));
+                listMissions.Remove(listMissions.First(x => x.id == 1475));
+                listMissions.Remove(listMissions.First(x => x.id == 1476));
+                listMissions.Remove(listMissions.First(x => x.id == 1477));
+                listMissions.Remove(listMissions.First(x => x.id == 1478));
+                listMissions.Remove(listMissions.First(x => x.id == 1479));
+                listMissions.Remove(listMissions.First(x => x.id == 1480));
+            }
+            if (chosenFaction != 1) // venture
             {
                 listMissions.Remove(listMissions.First(x => x.id == 589));
-                listMissions.Remove(listMissions.First(x => x.id == 590));
-                listMissions.Remove(listMissions.First(x => x.id == 591));
                 listMissions.Remove(listMissions.First(x => x.id == 812));
+                listMissions.Remove(listMissions.First(x => x.id == 556));
+                listMissions.Remove(listMissions.First(x => x.id == 557));
+                listMissions.Remove(listMissions.First(x => x.id == 558));
+                listMissions.Remove(listMissions.First(x => x.id == 559));
+                listMissions.Remove(listMissions.First(x => x.id == 563));
+                listMissions.Remove(listMissions.First(x => x.id == 564));
+                listMissions.Remove(listMissions.First(x => x.id == 565));
+                listMissions.Remove(listMissions.First(x => x.id == 952));
+                listMissions.Remove(listMissions.First(x => x.id == 561));
+                listMissions.Remove(listMissions.First(x => x.id == 562));
+                listMissions.Remove(listMissions.First(x => x.id == 1490));
+                listMissions.Remove(listMissions.First(x => x.id == 1491));
+                listMissions.Remove(listMissions.First(x => x.id == 1492));
+                listMissions.Remove(listMissions.First(x => x.id == 1493));
+                listMissions.Remove(listMissions.First(x => x.id == 1494));
+                listMissions.Remove(listMissions.First(x => x.id == 1495));
+                listMissions.Remove(listMissions.First(x => x.id == 1496));
+                listMissions.Remove(listMissions.First(x => x.id == 1497));
+                listMissions.Remove(listMissions.First(x => x.id == 1498));
+            }
+            if (chosenFaction != 2) // paradox
+            {
+                listMissions.Remove(listMissions.First(x => x.id == 590));
                 listMissions.Remove(listMissions.First(x => x.id == 813));
+                listMissions.Remove(listMissions.First(x => x.id == 578));
+                listMissions.Remove(listMissions.First(x => x.id == 579));
+                listMissions.Remove(listMissions.First(x => x.id == 580));
+                listMissions.Remove(listMissions.First(x => x.id == 581));
+                listMissions.Remove(listMissions.First(x => x.id == 582));
+                listMissions.Remove(listMissions.First(x => x.id == 583));
+                listMissions.Remove(listMissions.First(x => x.id == 584));
+                listMissions.Remove(listMissions.First(x => x.id == 953));
+                listMissions.Remove(listMissions.First(x => x.id == 586));
+                listMissions.Remove(listMissions.First(x => x.id == 587));
+                listMissions.Remove(listMissions.First(x => x.id == 1481));
+                listMissions.Remove(listMissions.First(x => x.id == 1482));
+                listMissions.Remove(listMissions.First(x => x.id == 1483));
+                listMissions.Remove(listMissions.First(x => x.id == 1484));
+                listMissions.Remove(listMissions.First(x => x.id == 1485));
+                listMissions.Remove(listMissions.First(x => x.id == 1486));
+                listMissions.Remove(listMissions.First(x => x.id == 1487));
+                listMissions.Remove(listMissions.First(x => x.id == 1488));
+                listMissions.Remove(listMissions.First(x => x.id == 1489));
+            }
+            if (chosenFaction != 3) // sentinel
+            {
+                listMissions.Remove(listMissions.First(x => x.id == 591));
                 listMissions.Remove(listMissions.First(x => x.id == 814));
+                listMissions.Remove(listMissions.First(x => x.id == 567));
+                listMissions.Remove(listMissions.First(x => x.id == 568));
+                listMissions.Remove(listMissions.First(x => x.id == 569));
+                listMissions.Remove(listMissions.First(x => x.id == 570));
+                listMissions.Remove(listMissions.First(x => x.id == 574));
+                listMissions.Remove(listMissions.First(x => x.id == 575));
+                listMissions.Remove(listMissions.First(x => x.id == 576));
+                listMissions.Remove(listMissions.First(x => x.id == 954));
+                listMissions.Remove(listMissions.First(x => x.id == 572));
+                listMissions.Remove(listMissions.First(x => x.id == 573));
+                listMissions.Remove(listMissions.First(x => x.id == 1372));
+                listMissions.Remove(listMissions.First(x => x.id == 1373));
+                listMissions.Remove(listMissions.First(x => x.id == 1374));
+                listMissions.Remove(listMissions.First(x => x.id == 1466));
+                listMissions.Remove(listMissions.First(x => x.id == 1467));
+                listMissions.Remove(listMissions.First(x => x.id == 1468));
+                listMissions.Remove(listMissions.First(x => x.id == 1469));
+                listMissions.Remove(listMissions.First(x => x.id == 1470));
+                listMissions.Remove(listMissions.First(x => x.id == 1471));
+            }
+            if (chosenFaction == 0)
+            {
                 tempMission.isChoiceReward = 0;
                 tempMission.reward_item1 = 6979;
                 tempMission.reward_item2 = -1;
@@ -55,12 +153,6 @@ namespace SQLiteWithCSharp
             }
             if (chosenFaction == 1)
             {
-                listMissions.Remove(listMissions.First(x => x.id == 588));
-                listMissions.Remove(listMissions.First(x => x.id == 590));
-                listMissions.Remove(listMissions.First(x => x.id == 591));
-                listMissions.Remove(listMissions.First(x => x.id == 813));
-                listMissions.Remove(listMissions.First(x => x.id == 814));
-                listMissions.Remove(listMissions.First(x => x.id == 815));
                 tempMission.isChoiceReward = 0;
                 tempMission.reward_item1 = 6980;
                 tempMission.reward_item2 = -1;
@@ -74,12 +166,6 @@ namespace SQLiteWithCSharp
             }
             if (chosenFaction == 2)
             {
-                listMissions.Remove(listMissions.First(x => x.id == 588));
-                listMissions.Remove(listMissions.First(x => x.id == 589));
-                listMissions.Remove(listMissions.First(x => x.id == 591));
-                listMissions.Remove(listMissions.First(x => x.id == 812));
-                listMissions.Remove(listMissions.First(x => x.id == 814));
-                listMissions.Remove(listMissions.First(x => x.id == 815));
                 tempMission.isChoiceReward = 0;
                 tempMission.reward_item1 = 6981;
                 tempMission.reward_item2 = -1;
@@ -93,12 +179,6 @@ namespace SQLiteWithCSharp
             }
             if (chosenFaction == 3)
             {
-                listMissions.Remove(listMissions.First(x => x.id == 588));
-                listMissions.Remove(listMissions.First(x => x.id == 589));
-                listMissions.Remove(listMissions.First(x => x.id == 590));
-                listMissions.Remove(listMissions.First(x => x.id == 812));
-                listMissions.Remove(listMissions.First(x => x.id == 813));
-                listMissions.Remove(listMissions.First(x => x.id == 815));
                 tempMission.isChoiceReward = 0;
                 tempMission.reward_item1 = 6978;
                 tempMission.reward_item2 = -1;

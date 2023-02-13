@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using SQLiteWithCSharp.Models;
+using LURando.Models;
 
 public delegate bool Del(World world);
 public struct ItemType
@@ -471,10 +471,10 @@ public static class SpecialLogic
         {10, (w, s, g) =>  (Rule.PlacedItem(w, new ItemType("14359", ItemCategory.items), 2) || Rule.PlacedItem(w, new ItemType("14321", ItemCategory.items), 2) || Rule.PlacedItem(w, new ItemType("14353", ItemCategory.items), 2) || Rule.PlacedItem(w, new ItemType("14315", ItemCategory.items), 2)) && SpecialLogic.savedAreas[9]},
         {11, (w, s, g) => (Rule.PlacedItem(w, new ItemType("9516", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("9517", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("9518", ItemCategory.items), 1)) && SpecialLogic.savedAreas[10]},
         {12, (w, s, g) =>
-        ((SQLiteWithCSharp.Program.chosenFaction == 0 && (Rule.PlacedItem(w, new ItemType("8033", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8031", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("7591", ItemCategory.items), 1))) ||
-        (SQLiteWithCSharp.Program.chosenFaction == 1 && (Rule.PlacedItem(w, new ItemType("7586", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8032", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8034", ItemCategory.items), 1))) ||
-        (SQLiteWithCSharp.Program.chosenFaction == 2 && (Rule.PlacedItem(w, new ItemType("7589", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8029", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8030", ItemCategory.items), 1))) ||
-        (SQLiteWithCSharp.Program.chosenFaction == 3 && (Rule.PlacedItem(w, new ItemType("7590", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8028", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8027", ItemCategory.items), 1)))
+        ((LURando.Program.chosenFaction == 0 && (Rule.PlacedItem(w, new ItemType("8033", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8031", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("7591", ItemCategory.items), 1))) ||
+        (LURando.Program.chosenFaction == 1 && (Rule.PlacedItem(w, new ItemType("7586", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8032", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8034", ItemCategory.items), 1))) ||
+        (LURando.Program.chosenFaction == 2 && (Rule.PlacedItem(w, new ItemType("7589", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8029", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8030", ItemCategory.items), 1))) ||
+        (LURando.Program.chosenFaction == 3 && (Rule.PlacedItem(w, new ItemType("7590", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8028", ItemCategory.items), 1) || Rule.PlacedItem(w, new ItemType("8027", ItemCategory.items), 1)))
         ) && SpecialLogic.savedAreas[11]},
     };
 }
@@ -505,6 +505,7 @@ public class Logic
         inWorld.rules[251] = (world) => SpecialLogic.savedAreas[1];
         inWorld.rules[252] = (world) => SpecialLogic.savedAreas[1];
         inWorld.rules[706] = (world) => SpecialLogic.savedAreas[1];
+        inWorld.rules[14] = (world) => SpecialLogic.savedAreas[1];
         inWorld.rules[707] = (world) => SpecialLogic.savedAreas[1];
         inWorld.rules[287] = (world) => SpecialLogic.savedAreas[1];
         inWorld.rules[755] = (world) => SpecialLogic.savedAreas[2];
@@ -512,6 +513,7 @@ public class Logic
         inWorld.rules[314] = (world) => SpecialLogic.savedAreas[2];
         inWorld.rules[259] = (world) => SpecialLogic.savedAreas[3];
         inWorld.rules[315] = (world) => SpecialLogic.savedAreas[3];
+        inWorld.rules[16] = (world) => SpecialLogic.savedAreas[4];
         inWorld.rules[733] = (world) => SpecialLogic.savedAreas[4];
         inWorld.rules[316] = (world) => SpecialLogic.savedAreas[4];
         inWorld.rules[939] = (world) => SpecialLogic.savedAreas[5];
@@ -565,6 +567,7 @@ public class Logic
         inWorld.rules[1153] = (world) => SpecialLogic.savedAreas[10];
         inWorld.rules[322] = (world) => SpecialLogic.savedAreas[10];
         inWorld.rules[1152] = (world) => SpecialLogic.savedAreas[10];
+        inWorld.rules[445] = (world) => SpecialLogic.savedAreas[10];
         inWorld.rules[324] = (world) => SpecialLogic.savedAreas[10];
         inWorld.rules[680] = (world) => SpecialLogic.savedAreas[10];
         inWorld.rules[938] = (world) => SpecialLogic.savedAreas[10];
@@ -588,6 +591,32 @@ public class Logic
         inWorld.rules[537] = (world) => SpecialLogic.savedAreas[11];
         inWorld.rules[302] = (world) => SpecialLogic.savedAreas[11];
         inWorld.rules[595] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[778] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[446] = (world) => SpecialLogic.savedAreas[11];
+        inWorld.rules[546] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("7591",ItemCategory.items), 1);
+        inWorld.rules[552] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8030",ItemCategory.items), 1);
+        inWorld.rules[955] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8031", ItemCategory.items), 1);
+        inWorld.rules[557] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("7586", ItemCategory.items), 1);
+        inWorld.rules[563] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8032", ItemCategory.items), 1);
+        inWorld.rules[952] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8034", ItemCategory.items), 1);
+        inWorld.rules[579] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("7589", ItemCategory.items), 1);
+        inWorld.rules[582] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8029", ItemCategory.items), 1);
+        inWorld.rules[953] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8030", ItemCategory.items), 1);
+        inWorld.rules[568] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("7590", ItemCategory.items), 1);
+        inWorld.rules[574] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8028", ItemCategory.items), 1);
+        inWorld.rules[954] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8027", ItemCategory.items), 1);
+        inWorld.rules[1472] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("7591", ItemCategory.items), 1);
+        inWorld.rules[1475] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8030", ItemCategory.items), 1);
+        inWorld.rules[1478] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8031", ItemCategory.items), 1);
+        inWorld.rules[1490] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("7586", ItemCategory.items), 1);
+        inWorld.rules[1493] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8032", ItemCategory.items), 1);
+        inWorld.rules[1496] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8034", ItemCategory.items), 1);
+        inWorld.rules[1481] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("7589", ItemCategory.items), 1);
+        inWorld.rules[1484] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8029", ItemCategory.items), 1);
+        inWorld.rules[1487] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8030", ItemCategory.items), 1);
+        inWorld.rules[1372] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("7590", ItemCategory.items), 1);
+        inWorld.rules[1466] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8028", ItemCategory.items), 1);
+        inWorld.rules[1469] = (world) => SpecialLogic.savedAreas[11] && Rule.PlacedItem(world, new ItemType("8027", ItemCategory.items), 1);
         inWorld.rules[812] = (world) => SpecialLogic.savedAreas[12];
         inWorld.rules[813] = (world) => SpecialLogic.savedAreas[12];
         inWorld.rules[814] = (world) => SpecialLogic.savedAreas[12];

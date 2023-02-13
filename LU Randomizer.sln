@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32929.386
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LURando.Common", "..\SQLiteWithCSharp.Common\LURando.Common.csproj", "{6795EF03-0D21-4E24-918D-D9BE66A961B3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LURando.Common", "LuRando.Common\LURando.Common.csproj", "{6795EF03-0D21-4E24-918D-D9BE66A961B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LURando.Models", "..\SQLiteWithCSharp.Models\LURando.Models.csproj", "{73605CDD-92D7-455F-9A28-FBC7FF2DE21F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LURando.Models", "LuRando.Models\LURando.Models.csproj", "{73605CDD-92D7-455F-9A28-FBC7FF2DE21F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LURando.Services", "..\SQLiteWithCSharp.Services\LURando.Services.csproj", "{D096D077-EA50-4238-A425-CC2C2F15EFE5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LURando.Services", "LuRando.Services\LURando.Services.csproj", "{D096D077-EA50-4238-A425-CC2C2F15EFE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LURando.Utility", "..\SQLiteWithCSharp.Utility\LURando.Utility.csproj", "{9AD0BCA7-7DFD-41F8-A906-753DBDF0E3E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LURando.Utility", "LuRando.Utility\LURando.Utility.csproj", "{9AD0BCA7-7DFD-41F8-A906-753DBDF0E3E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LURando", "..\SQLiteWithCSharp\LURando.csproj", "{AC7738A5-0844-45D5-81F8-9D7D802F53F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LURando", "LuRando\LURando.csproj", "{AC7738A5-0844-45D5-81F8-9D7D802F53F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

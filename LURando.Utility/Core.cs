@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLiteWithCSharp.Utility
+namespace LURando.Utility
 {
     /// <summary>
     /// Author : Swaraj Ketan Santra

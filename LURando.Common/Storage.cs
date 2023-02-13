@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLiteWithCSharp.Common
+namespace LURando.Common
 {
     public class Storage
     {
