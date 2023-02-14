@@ -191,7 +191,7 @@ namespace LURando
                 new MissionService().Update(tempMission);
             }
             Missions foundMission = new Missions();
-            var editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/emotes.txt");
+            var editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/temp/emotes.txt");
             for (int i = 0; i < listMissions.Count; i++)
             {
                 foundMission = listMissions[i];
@@ -208,7 +208,7 @@ namespace LURando
                 }
             }
             editingFile.Close();
-            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/items.txt");
+            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/temp/items.txt");
             for (int i = 0; i < listMissions.Count; i++)
             {
                 foundMission = listMissions[i];
@@ -229,7 +229,7 @@ namespace LURando
                 }
             }
             editingFile.Close();
-            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/currency.txt");
+            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/temp/currency.txt");
             for (int i = 0; i < listMissions.Count; i++)
             {
                 foundMission = listMissions[i];
@@ -243,7 +243,7 @@ namespace LURando
                 }
             }
             editingFile.Close();
-            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/exp.txt");
+            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/temp/exp.txt");
             for (int i = 0; i < listMissions.Count; i++)
             {
                 foundMission = listMissions[i];
@@ -257,7 +257,7 @@ namespace LURando
                 }
             }
             editingFile.Close();
-            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/imagination.txt");
+            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/temp/imagination.txt");
             for (int i = 0; i < listMissions.Count; i++)
             {
                 foundMission = listMissions[i];
@@ -271,7 +271,7 @@ namespace LURando
                 }
             }
             editingFile.Close();
-            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/inventory.txt");
+            editingFile = File.CreateText(Directory.GetCurrentDirectory() + "/temp/inventory.txt");
             for (int i = 0; i < listMissions.Count; i++)
             {
                 foundMission = listMissions[i];
@@ -356,7 +356,7 @@ namespace LURando
         {
             if (String.IsNullOrEmpty(Storage.ConnectionString))
             {
-                Storage.ConnectionString = string.Format("Data Source={0};Version=3;", System.IO.Directory.GetCurrentDirectory() + System.Configuration.ConfigurationManager.AppSettings["DatabaseFile"] + "\\DataBase\\CDServer.sqlite");
+                Storage.ConnectionString = string.Format("Data Source={0};Version=3;", System.IO.Directory.GetCurrentDirectory() + "\\Application_Files\\DataBase\\CDServer.sqlite");
             }
         }
 

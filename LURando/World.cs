@@ -275,37 +275,37 @@ public class World
         imagine = new List<ItemType>();
         inv = new List<ItemType>();
         exp = new List<ItemType>();
-        var itemsTxt = File.OpenText(Directory.GetCurrentDirectory() + "/items.txt");
+        var itemsTxt = File.OpenText(Directory.GetCurrentDirectory() + "/temp/items.txt");
         while (!itemsTxt.EndOfStream)
         {
             items.Add(new ItemType(itemsTxt.ReadLine() + ":" + itemsTxt.ReadLine(), ItemCategory.items));
         }
         itemsTxt.Close();
-        var emoteTxt = File.OpenText(Directory.GetCurrentDirectory() + "/emotes.txt");
+        var emoteTxt = File.OpenText(Directory.GetCurrentDirectory() + "/temp/emotes.txt");
         while (!emoteTxt.EndOfStream)
         {
             emotes.Add(new ItemType(emoteTxt.ReadLine(), ItemCategory.emotes));
         }
         emoteTxt.Close();
-        var currencyTxt = File.OpenText(Directory.GetCurrentDirectory() + "/currency.txt");
+        var currencyTxt = File.OpenText(Directory.GetCurrentDirectory() + "/temp/currency.txt");
         while (!currencyTxt.EndOfStream)
         {
             currency.Add(new ItemType(currencyTxt.ReadLine(), ItemCategory.currency));
         }
         currencyTxt.Close();
-        var expTxt = File.OpenText(Directory.GetCurrentDirectory() + "/exp.txt");
+        var expTxt = File.OpenText(Directory.GetCurrentDirectory() + "/temp/exp.txt");
         while (!expTxt.EndOfStream)
         {
             exp.Add(new ItemType(expTxt.ReadLine(), ItemCategory.exp));
         }
         expTxt.Close();
-        var invTxt = File.OpenText(Directory.GetCurrentDirectory() + "/inventory.txt");
+        var invTxt = File.OpenText(Directory.GetCurrentDirectory() + "/temp/inventory.txt");
         while (!invTxt.EndOfStream)
         {
             inv.Add(new ItemType(invTxt.ReadLine(), ItemCategory.inv));
         }
         invTxt.Close();
-        var imaginationTxt = File.OpenText(Directory.GetCurrentDirectory() + "/imagination.txt");
+        var imaginationTxt = File.OpenText(Directory.GetCurrentDirectory() + "/temp/imagination.txt");
         while (!imaginationTxt.EndOfStream)
         {
             imagine.Add(new ItemType(imaginationTxt.ReadLine(), ItemCategory.imagine));
