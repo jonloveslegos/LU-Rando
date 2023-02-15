@@ -8,3 +8,6 @@ Steps to use:
 5. Convert the same "CDServer.sqlite" using https://fdb.lu-dev.net/sqlite-to-fdb/ and replace the "cdclient.fdb" with the resulting file. (Make sure to rename the resulting file to "cdclient.fdb")
 6. Run the server and client and connect to the server.
 7. Have fun!
+
+
+Discord: https://discord.gg/G7FqXWyJbG
